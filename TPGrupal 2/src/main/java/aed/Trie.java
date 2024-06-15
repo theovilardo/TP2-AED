@@ -42,21 +42,6 @@ public class Trie<T>{
         this.raiz = new Nodo(null);
     }
 
-    //Insertar
-    // public void insertar(String clave, T valor) {
-    //     Nodo actual = raiz;
-    //     for (char c : clave.toCharArray()) { // convierte a cadena de chars
-    //         int index = c;
-    //         if (!actual.indices[index]) {
-    //             actual.hijos[index] = new Nodo();
-    //             actual.indices[index] = true;
-    //         }
-    //         actual = actual.hijos[index];
-    //     }
-    //     actual.seteaFinalDeClave(true);
-    //     actual.asignarValor(valor);
-    // }
-
     // ver como no pisar otros caracteres
 
     //Insertar
@@ -74,5 +59,29 @@ public class Trie<T>{
         // el ultimo nodo es el de significado:
         actual.seteaFinalDeClave(true);
         actual.asignarValor(valor); // hace falta asignar?
+    }
+
+    public T obtenerSignificado(String clave){
+        Nodo actual = raiz;
+        for (char c : clave.toCharArray()) {
+            int index = c; // Convertimos el caracter en su valor ASCII
+            if (actual.hijos.get(index) == null) {
+                return null;
+            }
+            actual = actual.hijos.get(index);
+        }
+        return actual.obtenerValor();
+    }
+
+    public boolean buscar(String clave) {
+        Nodo actual = raiz;
+        for (char c : clave.toCharArray()) { // convierte a cadena de chars
+            int index = c; // pasa el char a codiog ASCII
+            if (actual.hijos.get(index) == null) {
+                return false;
+            }
+            actual = actual.hijos.get(index);
+        }
+        return actual.valor != null; // si el nodo significado no es nulo encontraste la clave
     }
 }
