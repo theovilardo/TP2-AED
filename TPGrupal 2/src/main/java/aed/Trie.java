@@ -127,17 +127,19 @@ public class Trie<T>{
     // obtener todas las claves del trie
     public List<String> claves() {
         List<String> claves = new ArrayList<>();
-        obtenerClaves(raiz, new StringBuilder(), claves);
+        obtenerClaves(raiz, new StringBuilder(), claves); //inicializo el tipo BtringBuilder()
         return claves;
     }
 
     private void obtenerClaves(Nodo actual, StringBuilder claveActual, List<String> claves) {
+        //caso base
         if (actual == null) {
             return;
         }
         if (actual.obtenerValor() != null) {
             claves.add(claveActual.toString());
         }
+        //hay que revisar si esto cumple o no con las complejidades porque termina iterando todo el alfabeto por cada nodo (not very efficient)
         for (int i = 0; i < ALFABETO_LEXICOGRAFICO; i++) {
             Nodo hijo = actual.hijos.get(i);
             if (hijo != null) {
