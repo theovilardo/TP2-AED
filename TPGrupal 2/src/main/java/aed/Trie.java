@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Trie<T>{
     private Nodo raiz;
+    // Para el trie de estudiantes podriamos modificar esto para especificarle al trie que tipo de alfabeto usar, para el trie de estudiantes solo tendria largo de 11 en vez del 128 del ASCII
     public static final int ALFABETO_LEXICOGRAFICO = 128; // alfabeto para el orden lexicografico segun el codigo ASCII
 
     // clase interna del nodo
