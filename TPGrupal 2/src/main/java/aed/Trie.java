@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Trie<T>{
     private Nodo raiz;
-    public static final int ALFABETO_LEXICOGRAFICO = 128; // alfabeto para el orden lexicografico segun el codigo ASCII
+    public static final int ALFABETO_LEXICOGRAFICO = 256; // alfabeto para el orden lexicografico segun el codigo ASCII
 
     // clase interna del nodo
     private class Nodo{
@@ -35,7 +35,7 @@ public class Trie<T>{
     //Insertar
     // Dato: si se mete una clave ya existente reemplazara el valor actual por el dado
     public void insertar(String clave, T valor) {
-        clave = Normalizador.normalizar(clave); //normaliza la clave en caso de tener caracteres fuera dle codigo ASCII 128 como el "ó". Falta corroborar
+        //clave = Normalizador.normalizar(clave); //normaliza la clave en caso de tener caracteres fuera dle codigo ASCII 128 como el "ó". Falta corroborar
         Nodo actual = raiz;
         for (char c : clave.toCharArray()) { // convierte a cadena de chars
             int index = c; // pasa el char a codiog ASCII
@@ -48,7 +48,7 @@ public class Trie<T>{
     }
 
     public T obtenerSignificado(String clave){
-        clave = Normalizador.normalizar(clave); //normaliza la clave
+        //clave = Normalizador.normalizar(clave); //normaliza la clave
         Nodo actual = raiz;
         for (char c : clave.toCharArray()) {
             int index = c; // Convertimos el caracter en su valor ASCII
@@ -64,7 +64,7 @@ public class Trie<T>{
     }
 
     public boolean buscar(String clave) {
-        clave = Normalizador.normalizar(clave); //normaliza la clave
+        //clave = Normalizador.normalizar(clave); //normaliza la clave
         Nodo actual = raiz;
         for (char c : clave.toCharArray()) { // convierte a cadena de chars
             int index = c; // pasa el char a codiog ASCII
@@ -78,7 +78,7 @@ public class Trie<T>{
 
     // Método para eliminar una clave del Trie
     public void eliminar(String clave) {
-        clave = Normalizador.normalizar(clave); //normaliza la clave
+        //clave = Normalizador.normalizar(clave); //normaliza la clave
         eliminarTrie(raiz, clave, 0); //inicializo el eliminador con el index en 0 (primera posicion de la clave)
     }
 
