@@ -6,28 +6,17 @@ import java.util.List;
 
 public class Trie<T>{
     private Nodo raiz;
-    // Para el trie de estudiantes podriamos modificar esto para especificarle al trie que tipo de alfabeto usar, para el trie de estudiantes solo tendria largo de 11 en vez del 128 del ASCII
     public static final int ALFABETO_LEXICOGRAFICO = 128; // alfabeto para el orden lexicografico segun el codigo ASCII
 
     // clase interna del nodo
     private class Nodo{
         private ArrayList<Nodo> hijos;
-        private boolean finalDeClave;
         private T valor;
 
         //uso: si el nodo es el nodo de significado su valor se llena con los datos, sino su valor queda vacio
         public Nodo(T valor) {
             this.hijos = new ArrayList<>(Collections.nCopies(ALFABETO_LEXICOGRAFICO, null));
-            this.finalDeClave = false;
             this.valor = valor;
-        }
-
-        public boolean esfinalDeClave() {
-            return finalDeClave;
-        }
-
-        public void seteaFinalDeClave(boolean finalDeClave) {
-            this.finalDeClave = finalDeClave;
         }
 
         public T obtenerValor() {
@@ -46,6 +35,7 @@ public class Trie<T>{
     //Insertar
     // Dato: si se mete una clave ya existente reemplazara el valor actual por el dado
     public void insertar(String clave, T valor) {
+        clave = Normalizador.normalizar(clave); //normaliza la clave en caso de tener caracteres fuera dle codigo ASCII 128 como el "ó". Falta corroborar
         Nodo actual = raiz;
         for (char c : clave.toCharArray()) { // convierte a cadena de chars
             int index = c; // pasa el char a codiog ASCII
@@ -58,6 +48,7 @@ public class Trie<T>{
     }
 
     public T obtenerSignificado(String clave){
+        clave = Normalizador.normalizar(clave); //normaliza la clave
         Nodo actual = raiz;
         for (char c : clave.toCharArray()) {
             int index = c; // Convertimos el caracter en su valor ASCII
@@ -66,10 +57,14 @@ public class Trie<T>{
             }
             actual = actual.hijos.get(index);
         }
+        if (actual.obtenerValor() == null){
+            throw new UnsupportedOperationException("el valor de esta clave es nulo (no deberia pasar)");
+        }
         return actual.obtenerValor();
     }
 
     public boolean buscar(String clave) {
+        clave = Normalizador.normalizar(clave); //normaliza la clave
         Nodo actual = raiz;
         for (char c : clave.toCharArray()) { // convierte a cadena de chars
             int index = c; // pasa el char a codiog ASCII
@@ -83,6 +78,7 @@ public class Trie<T>{
 
     // Método para eliminar una clave del Trie
     public void eliminar(String clave) {
+        clave = Normalizador.normalizar(clave); //normaliza la clave
         eliminarTrie(raiz, clave, 0); //inicializo el eliminador con el index en 0 (primera posicion de la clave)
     }
 
@@ -128,19 +124,17 @@ public class Trie<T>{
     // obtener todas las claves del trie
     public List<String> claves() {
         List<String> claves = new ArrayList<>();
-        obtenerClaves(raiz, new StringBuilder(), claves); //inicializo el tipo BtringBuilder()
+        obtenerClaves(raiz, new StringBuilder(), claves);
         return claves;
     }
 
     private void obtenerClaves(Nodo actual, StringBuilder claveActual, List<String> claves) {
-        //caso base
         if (actual == null) {
             return;
         }
         if (actual.obtenerValor() != null) {
             claves.add(claveActual.toString());
         }
-        //hay que revisar si esto cumple o no con las complejidades porque termina iterando todo el alfabeto por cada nodo (not very efficient)
         for (int i = 0; i < ALFABETO_LEXICOGRAFICO; i++) {
             Nodo hijo = actual.hijos.get(i);
             if (hijo != null) {
