@@ -22,8 +22,7 @@ public class SistemaSIU {
             Materia mdata = new Materia();
             // Trie trieMaterias = new Trie<Materia>();
             for (ParCarreraMateria parCarreraMateria : paresCarreraMateria){
-                // hay un error, las materias estan quedando con valor nulo
-                trieMaterias.insertar(parCarreraMateria.nombreMateria, mdata); //no se esta insertando bien la data de las materias
+                trieMaterias.insertar(parCarreraMateria.nombreMateria, mdata);
                 carrerasNew.insertar(parCarreraMateria.getCarrera(), trieMaterias); //guardar en una lista todos los tries de materias de carreras que comparte - coment para Teo
             }
         }
