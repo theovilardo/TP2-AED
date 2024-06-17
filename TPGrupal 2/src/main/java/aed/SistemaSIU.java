@@ -81,19 +81,15 @@ public class SistemaSIU {
     public boolean excedeCupo(String materia, String carrera){
         int [] plantelDocente = carreras.obtenerSignificado(carrera).obtenerSignificado(materia).obtenerPlantelDocente();
         int estudiantesInscriptos = carreras.obtenerSignificado(carrera).obtenerSignificado(materia).obtenerInscriptos();
-        // Capacidades máximas por cargo docente
+        // cap maximas por cargo docente:
         int capacidadPorProfesor = 250;
         int capacidadPorJTP = 100;
         int capacidadPorAy1 = 20;
         int capacidadPorAy2 = 30;
-        // Calcular capacidad total permitida
-        int capacidadTotal = (plantelDocente[0] * capacidadPorProfesor)
-                + (plantelDocente[1] * capacidadPorJTP)
-                + (plantelDocente[2] * capacidadPorAy1)
-                + (plantelDocente[3] * capacidadPorAy2);
+        // capacidad total, seria el cupo maximo
+        int capacidadTotal = (plantelDocente[0] * capacidadPorProfesor) + (plantelDocente[1] * capacidadPorJTP) + (plantelDocente[2] * capacidadPorAy1) + (plantelDocente[3] * capacidadPorAy2);
         
-        // Comparar estudiantes inscritos con capacidad total permitida
-        return estudiantesInscriptos > capacidadTotal;
+        return estudiantesInscriptos > capacidadTotal; // flase si excede el cupo
     }
 
     public String[] carreras(){
