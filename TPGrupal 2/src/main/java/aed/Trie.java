@@ -132,6 +132,9 @@ public class Trie<T>{
         if (actual == null) {
             return;
         }
+        // if (claveActual.toString() == "Intro a la Programación"){
+        //     throw new UnsupportedOperationException("te encontre hdp");
+        // }
         if (actual.obtenerValor() != null) {
             claves.add(claveActual.toString());
         }
@@ -143,5 +146,14 @@ public class Trie<T>{
                 claveActual.deleteCharAt(claveActual.length() - 1);
             }
         }
+    }
+
+    public void eliminarSignficado(String clave){
+        Nodo actual = raiz;
+        for (char c : clave.toCharArray()) { // convierte a cadena de chars
+            int index = c; // pasa el char a codiog ASCII
+            actual = actual.hijos.get(index);
+        }
+        actual.asignarValor(null);
     }
 }
