@@ -128,7 +128,8 @@ public class SistemaSIU {
     }
 
     public String[] materias(String carrera){
-        String[] stringToArray = carreras.obtenerSignificado(carrera).claves().toArray(new String[0]);
+        // String[] stringToArray = carreras.obtenerSignificado(carrera).claves().toArray(new String[0]);
+        String[] stringToArray = carreras.obtenerSignificado(carrera).claveMaterias().toArray(new String[0]); //pruebo la version de claves que chequea el estado de la Materia
         return stringToArray;
     }
 
