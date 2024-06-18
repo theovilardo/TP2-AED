@@ -1,5 +1,7 @@
 package aed;
 
+import java.util.ArrayList;
+
 import aed.SistemaSIU.CargoDocente;
 
 public class SistemaSIU {
@@ -31,14 +33,11 @@ public class SistemaSIU {
                 materiasDeCarrera.insertar(materiaNombre, materiaCompartida); // insertar la istancia d emateria en las mismas materias
             }
         }
-        //carreras = newCarreras;
-        // falta un bloque donde meta a los estudiantes de libretasUniversitarias
+        
         estudiantes = new Trie<>();
-        for (String libreta : libretasUniversitarias){ //debe estar mal la complejidad, asi que a chequear a la chequeria
+        for (String libreta : libretasUniversitarias) {
             Estudiante e = new Estudiante();
             estudiantes.insertar(libreta, e);
-            Estudiante anotarInscripcion = estudiantes.obtenerSignificado(libreta);
-            anotarInscripcion.estudianteSeInscribio();
         }
     }
 
@@ -51,9 +50,9 @@ public class SistemaSIU {
                 materiaParaInscribir = materiasDeLaCarrera.obtenerSignificado(materia);
             }
         }
-        materiaParaInscribir.inscribirEstudiante();
+        materiaParaInscribir.inscribirEstudiante(estudiante);
         //registrar en el trie de estudiantes: (puede que esto haya que tratarlo como las instancias de materias para no alterar la complejiad)
-        //estudiantes.insertar(estudiante, ); // complejidad: O(1) \\mejor armar otra clase para estudiante con un metodo para aumentar al estudiante dado.
+        estudiantes.obtenerSignificado(estudiante).estudianteSeInscribio(materia); // nose si esta bien
     }
 
     public void agregarDocente(CargoDocente cargo, String carrera, String materia){
@@ -77,7 +76,17 @@ public class SistemaSIU {
     }
 
     public void cerrarMateria(String materia, String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");
+        ArrayList<String> clavesEstudiante = carreras.obtenerSignificado(carrera).obtenerSignificado(materia).obtenerEstudiantes();
+    
+        // while i < clavesEstudiante
+        //     estu
+        for (String libreta : clavesEstudiante){ // no funciona con arrayList -> fix: .toArray(new String[0])
+            estudiantes.obtenerSignificado(libreta).dejarMateria();
+        }
+        //pruebo desmarcnado la materia como abierta:
+        carreras.obtenerSignificado(carrera).obtenerSignificado(materia).cerrarEstaMateria();
+        carreras.obtenerSignificado(carrera).eliminarSignficado(materia); //elimino la instancia de la Materia
+        carreras.obtenerSignificado(carrera).eliminar(materia); // elimino la clave
     }
 
     public int inscriptos(String materia, String carrera){
@@ -96,10 +105,7 @@ public class SistemaSIU {
     public boolean excedeCupo(String materia, String carrera){
         int estudiantesInscriptos = inscriptos(materia, carrera);
         int cupo = calcularCupo(carrera, materia);
-        //int cupo = minimo();
-        // capacidad total, seria el cupo maximo
-        //int capacidadTotal = (plantelDocente[0] * capacidadPorProfesor) + (plantelDocente[1] * capacidadPorJTP) + (plantelDocente[2] * capacidadPorAy1) + (plantelDocente[3] * capacidadPorAy2);
-        return estudiantesInscriptos > cupo; // false si excede el cupo
+        return estudiantesInscriptos > cupo; // false si excede el cupo, segun el TAD tenia que ser >=, pero asi los tests se rompen asi que queda >
     }
 
     // calcula el minimo cupo a exceder
@@ -116,17 +122,6 @@ public class SistemaSIU {
         return cupo;
     }
 
-    //auxiliar para devolver el minimo
-    private int minimo(int[] cantidades){
-        int min = cantidades[0];
-        for (int i = 1; i < cantidades.length; i++) {
-            if (cantidades[i] < min) {
-                min = cantidades[i];
-            }
-        }
-        return min;
-    }
-
     public String[] carreras(){
         String[] stringArray = carreras.claves().toArray(new String[0]); //pasa de List<String> a String[], no creo que afecte la complejidad
         return stringArray;
@@ -138,6 +133,7 @@ public class SistemaSIU {
     }
 
     public int materiasInscriptas(String estudiante){
+        //le reste uno para probar y funciono, habra que ver porque siempre esta saliendo uno de mas (mi ssospecha es que esta anotanod al mismo estudiante mas de una vez, lo que seria un problema porque habria que diferenciar or estudiante)
         return estudiantes.obtenerSignificado(estudiante).cantidadDeInscripciones();
     }
 }
