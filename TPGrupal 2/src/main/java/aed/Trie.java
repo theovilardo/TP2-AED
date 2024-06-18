@@ -156,4 +156,30 @@ public class Trie<T>{
         }
         actual.asignarValor(null);
     }
+
+    public List<String> claveMaterias() {
+        List<String> claves = new ArrayList<>();
+        obtenerClavesMaterias(raiz, new StringBuilder(), claves);
+        return claves;
+    }
+
+    private void obtenerClavesMaterias(Nodo actual, StringBuilder claveActual, List<String> claves) {
+        if (actual == null) {
+            return;
+        }
+        if (actual.obtenerValor() != null) {
+            Materia materia = (Materia) actual.obtenerValor();
+            if (!materia.estaCerrada()) {
+                claves.add(claveActual.toString());
+            }
+        }
+        for (int i = 0; i < ALFABETO_LEXICOGRAFICO; i++) {
+            Nodo hijo = actual.hijos.get(i);
+            if (hijo != null) {
+                claveActual.append((char) i);
+                obtenerClavesMaterias(hijo, claveActual, claves);
+                claveActual.deleteCharAt(claveActual.length() - 1);
+            }
+        }
+    }
 }
