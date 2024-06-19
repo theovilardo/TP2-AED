@@ -1,6 +1,12 @@
 package aed;
 
 import java.util.ArrayList;
+/*
+Inv rep: 
+estudiantesInscriptos debe ser un entero no negativo y debe coincidir con el tamaño de estudiantesDeLaMateria.
+plantelDocente debe ser un arreglo de enteros con 4 elementos, todos no negativos, donde cada elemento representa la cantidad de docentes en un cargo específico.
+estudiantesDeLaMateria debe ser una lista de cadenas (libretas universitarias) cuya longitud debe ser igual a estudiantesInscriptos.
+*/
 
 public class Materia{
     private boolean estaCerrada; // Estado de la Asignatura (Abierta o Cerrada)
