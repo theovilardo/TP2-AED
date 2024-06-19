@@ -1,5 +1,9 @@
 package aed;
 
+/*
+Inv rep: cantidadDeInscripciones debe ser un valor entero no negativo que refleje la cantidad de materias a las que el estudiante está actualmente inscripto.
+*/
+
 public class Estudiante {
     private int cantidadDeInscripciones; // Cantidad de materias a las que esta inscripto el estudiante
 
