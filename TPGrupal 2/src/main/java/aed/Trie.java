@@ -3,7 +3,12 @@ package aed;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+/*
+Inv rep:
+Debe existir un nodo raiz valido
+Cada nodo del Trie debe tener una lista de hijos con exactamente ALFABETO_LEXICOGRAFICO elementos, cada uno de los cuales puede ser nulo o una referencia a otro nodo.
+El valor de un nodo puede ser nulo si el nodo no representa el final de una clave; de lo contrario, debe contener un valor válido. Siendo un nodo valido nulo si el nodo es parte de la clave pero no tiene un significado propio o Si el nodo representa el final de una clave válida, valor debe contener el valor asociado a esa clave. 
+*/
 public class Trie<T>{
     private Nodo raiz; // Nodo raiz del Trie
     public static final int ALFABETO_LEXICOGRAFICO = 256; // alfabeto para el orden lexicografico segun el codigo ASCII
