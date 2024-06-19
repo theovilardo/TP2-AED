@@ -3,7 +3,13 @@ package aed;
 import java.util.ArrayList;
 
 import aed.SistemaSIU.CargoDocente;
-
+/* Asignatura = Materia que tiene distinto nombre segun la carrera.
+Inv Rep: 
+El Trie carreras debe contener un Trie de materiasDeCarrera para cada carrera. 
+Cada materiasDeCarrera debe contener todas las materias asociadas a esa carrera, con las materias de una misma asignatura compartiendo la misma instancia de Materia.
+El Trie estudiantes debe contener una instancia de Estudiante para cada libreta universitaria proporcionada en el constructor.
+Complejidad: 
+*/
 public class SistemaSIU {
     private Trie<Trie<Materia>> carreras; // Trie de carreras que guarda en su valor un Trie distinto para las materias de esas carreras
     private Trie<Estudiante> estudiantes; // Trie de estudianes, sus claves son las libretas universitarias y el valor de cada una es una instancia de Estudiante que guarda las inscripciones a las materias
