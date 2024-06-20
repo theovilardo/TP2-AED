@@ -38,6 +38,9 @@ public class SistemaSIU {
                     carreras.insertar(carreraNombre, materiasDeCarrera); // insertar el Trie materiasDeCarrera en la carrera
                 }
                 materiasDeCarrera.insertar(materiaNombre, materiaCompartida); // insertar la istancia compartida de materia en las mismas materias (esto es para que apunten a la misma instancia de Materia y se actualicen juntas, es un alisaing intencional)
+
+                materiaCompartida.agregarNombreMateria(materiaNombre);
+                materiaCompartida.agregarCarrera(materiasDeCarrera); //guardo cada carrera donde aparece esa materia (asignatura)
             }
         }
         
@@ -88,13 +91,26 @@ public class SistemaSIU {
         for (String libreta : clavesEstudiante){
             estudiantes.obtenerSignificado(libreta).dejarMateria(); //O(1) * E_m = O(|E_m|)
         }
-        // Para surtir el problema de no poder acceder nuevamente al resto de las carreras que compartan esta asignatura,
-        // y teniendo en cuenta que no existe la posibilidad de abrir una materia luego de ser cerrada (por los métodos posibles)
-        // en vez de eliminar la instancia Materia y su clave correspondiente de todas las carreras que la compartan, marcamos a la materia
-        // como cerrada usando una variable booleana dentro de la instancia materia. De esta forma, al pedir las materias de cierta carrera,
-        // indicaremos que si la materia está cerrada, no se devuelva. Esto tiene entonces complejidad O(|c+m|)
-        carreras.obtenerSignificado(carrera).obtenerSignificado(materia).cerrarEstaMateria();
-        // la complejidad final es O(|c+m|) + O(|E_m|) que está contenido dentro de lo pedido, O(|c+m| + E_m| + O(|c+m| + E_m + la suma de cada nombre de materia de la asignatura m)
+
+        Materia asignaturaACerrar = carreras.obtenerSignificado(carrera).obtenerSignificado(materia);
+        
+        for (int i = 0; i < asignaturaACerrar.getCarreras().size(); i++){
+            System.out.print(asignaturaACerrar.getNombresMateria());
+            String nombreMateria = asignaturaACerrar.getNombresMateria().get(i);
+            Trie<Materia> materiasDeCarrera = asignaturaACerrar.getCarreras().get(i);
+            materiasDeCarrera.eliminar(nombreMateria);
+        }
+        // for (Trie<Materia> materiasDeCarrera : asignaturaACerrar.getCarreras()){
+        //     materiasDeCarrera.eliminar(materia);
+        // }
+
+        // // Para surtir el problema de no poder acceder nuevamente al resto de las carreras que compartan esta asignatura,
+        // // y teniendo en cuenta que no existe la posibilidad de abrir una materia luego de ser cerrada (por los métodos posibles)
+        // // en vez de eliminar la instancia Materia y su clave correspondiente de todas las carreras que la compartan, marcamos a la materia
+        // // como cerrada usando una variable booleana dentro de la instancia materia. De esta forma, al pedir las materias de cierta carrera,
+        // // indicaremos que si la materia está cerrada, no se devuelva. Esto tiene entonces complejidad O(|c+m|)
+        // carreras.obtenerSignificado(carrera).obtenerSignificado(materia).cerrarEstaMateria();
+        // // la complejidad final es O(|c+m|) + O(|E_m|) que está contenido dentro de lo pedido, O(|c+m| + E_m| + O(|c+m| + E_m + la suma de cada nombre de materia de la asignatura m)
     }
 
     public int inscriptos(String materia, String carrera){
@@ -134,7 +150,7 @@ public class SistemaSIU {
     }
 
     public String[] materias(String carrera){
-        String[] stringToArray = carreras.obtenerSignificado(carrera).claveMaterias().toArray(new String[0]); // .claveMaterias() devuelve la lista de materias de la carrera (mientras esten abiertas)
+        String[] stringToArray = carreras.obtenerSignificado(carrera).claves().toArray(new String[0]); // .claveMaterias() devuelve la lista de materias abiertas (no cerradas) de la carrera
         return stringToArray;
     }
 
