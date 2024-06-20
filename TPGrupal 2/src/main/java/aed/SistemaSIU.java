@@ -8,7 +8,8 @@ Inv Rep:
 El Trie carreras debe contener un Trie de materiasDeCarrera para cada carrera. 
 Cada materiasDeCarrera debe contener todas las materias asociadas a esa carrera, con las materias de una misma asignatura compartiendo la misma instancia de Materia.
 El Trie estudiantes debe contener una instancia de Estudiante para cada libreta universitaria proporcionada en el constructor.
-Complejidad: 
+Sobre las complejidades, para no excederos con la cantidad de comentarios, entendemos que realizar una cantidad finita y constante de veces algo que es 
+O(n), sigue siendo O(n).  
 */
 public class SistemaSIU {
     private Trie<Trie<Materia>> carreras; // Trie de carreras que guarda en su valor un Trie distinto para las materias de esas carreras
@@ -50,20 +51,21 @@ public class SistemaSIU {
     public void inscribir(String estudiante, String carrera, String materia){
         Materia materiaParaInscribir = new Materia();
         //busco en el trie de la carrera el trie de la materia y pido su valor tipo materia para inscribir al estudiante
-        if (carreras.obtenerSignificado(carrera) != null){  // no deberian aparece nulos, se tiene que encargar el constructor (si jode la complejidad se lo saca la guarda)
-            Trie<Materia> materiasDeLaCarrera = carreras.obtenerSignificado(carrera);
-            if (materiasDeLaCarrera.obtenerSignificado(materia) != null){
+        if (carreras.obtenerSignificado(carrera) != null){ 
+            Trie<Materia> materiasDeLaCarrera = carreras.obtenerSignificado(carrera); // O(|c|)
+            if (materiasDeLaCarrera.obtenerSignificado(materia) != null){ // O(|m|)
                 materiaParaInscribir = materiasDeLaCarrera.obtenerSignificado(materia);
             }
         }
-        materiaParaInscribir.inscribirEstudiante(estudiante);
+        materiaParaInscribir.inscribirEstudiante(estudiante); // O(|m|)
         //registrar la inscripcion en el trie de estudiantes:
-        estudiantes.obtenerSignificado(estudiante).estudianteSeInscribio(materia); // nose si esta bien
+        estudiantes.obtenerSignificado(estudiante).estudianteSeInscribio(materia); // O(1), porque el Trie estudiante es acotado
+        // O(|c|) + O(|m|) + O(|1|) = O(|c+m|)
     }
 
     public void agregarDocente(CargoDocente cargo, String carrera, String materia){
         if (cargo == CargoDocente.AY2){
-            carreras.obtenerSignificado(carrera).obtenerSignificado(materia).agregarDocente(3); //AY2
+            carreras.obtenerSignificado(carrera).obtenerSignificado(materia).agregarDocente(3); //AY2. O(|c|) + O(|m|) + O(|1|) = O(|c+m|), igual en cualquier guarda
         }
         if (cargo == CargoDocente.AY1){
             carreras.obtenerSignificado(carrera).obtenerSignificado(materia).agregarDocente(2); //AY1
@@ -77,31 +79,33 @@ public class SistemaSIU {
     }
 
     public int[] plantelDocente(String materia, String carrera){
-        return carreras.obtenerSignificado(carrera).obtenerSignificado(materia).obtenerPlantelDocente();   
+        return carreras.obtenerSignificado(carrera).obtenerSignificado(materia).obtenerPlantelDocente(); // O(|c|) + O(|m|) + O(|1|) = O(|c+m|)
     }
 
     public void cerrarMateria(String materia, String carrera){
-        ArrayList<String> clavesEstudiante = carreras.obtenerSignificado(carrera).obtenerSignificado(materia).obtenerEstudiantes();
+        ArrayList<String> clavesEstudiante = carreras.obtenerSignificado(carrera).obtenerSignificado(materia).obtenerEstudiantes(); // O(|c|) + O(|m|) + O(|1|) = O(|c+m|)
 
         for (String libreta : clavesEstudiante){
-            estudiantes.obtenerSignificado(libreta).dejarMateria();
+            estudiantes.obtenerSignificado(libreta).dejarMateria(); //O(1) * E_m = O(|E_m|)
         }
-        // Al cerrar la carrera la marco como cerrada y la elimino del Trie
+        // Para surtir el problema de no poder acceder nuevamente al resto de las carreras que compartan esta asignatura,
+        // y teniendo en cuenta que no existe la posibilidad de abrir una materia luego de ser cerrada (por los métodos posibles)
+        // en vez de eliminar la instancia Materia y su clave correspondiente de todas las carreras que la compartan, marcamos a la materia
+        // como cerrada usando una variable booleana dentro de la instancia materia. De esta forma, al pedir las materias de cierta carrera,
+        // indicaremos que si la materia está cerrada, no se devuelva. Esto tiene entonces complejidad O(|c+m|)
         carreras.obtenerSignificado(carrera).obtenerSignificado(materia).cerrarEstaMateria();
-        // no hay una explicacion de porque lo hacemos por separado, ver que poner aca
-        carreras.obtenerSignificado(carrera).eliminarSignficado(materia); //elimino la instancia de la Materia
-        carreras.obtenerSignificado(carrera).eliminar(materia); // elimino la clave
+        // la complejidad final es O(|c+m|) + O(|E_m|) que está contenido dentro de lo pedido, O(|c+m| + E_m| + O(|c+m| + E_m + la suma de cada nombre de materia de la asignatura m)
     }
 
     public int inscriptos(String materia, String carrera){
         int inscriptos = 0;
         if (carreras.obtenerSignificado(carrera) != null){
-            Trie<Materia> materiasDeLaCarrera = carreras.obtenerSignificado(carrera);
-            if (materiasDeLaCarrera.obtenerSignificado(materia) != null){ // chequear si es necesaria la guarda
-                inscriptos = materiasDeLaCarrera.obtenerSignificado(materia).obtenerInscriptos();
+            Trie<Materia> materiasDeLaCarrera = carreras.obtenerSignificado(carrera); // O(|c|)
+            if (materiasDeLaCarrera.obtenerSignificado(materia) != null){
+                inscriptos = materiasDeLaCarrera.obtenerSignificado(materia).obtenerInscriptos(); // O(|m|) + O(1)
             }
         }
-        return inscriptos;
+        return inscriptos; //O(|c|) + O(|m|) + O(1) = O(|c+m|)
     }
 
     public boolean excedeCupo(String materia, String carrera){
