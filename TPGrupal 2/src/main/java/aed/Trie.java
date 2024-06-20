@@ -18,7 +18,7 @@ public class Trie<T>{
         private ArrayList<Nodo> hijos;
         private T valor;
 
-        // NOTA: Los nodos cuyo valor es vacion son parte de la clave y cobran sentido al llegar la nodo significado que es el que contiene el valor de la clave
+        // NOTA: Los nodos cuyo valor es vacío son parte de la clave y cobran sentido al llegar al nodo significado que es el que contiene el valor de la clave
         public Nodo(T valor) {
             this.hijos = new ArrayList<>(Collections.nCopies(ALFABETO_LEXICOGRAFICO, null));
             this.valor = valor;
