@@ -9,6 +9,19 @@ Debe existir un nodo raiz valido
 Cada nodo del Trie debe tener una lista de hijos con exactamente ALFABETO_LEXICOGRAFICO elementos, cada uno de los cuales puede ser nulo o una referencia a otro nodo.
 El valor de un nodo puede ser nulo si el nodo no representa el final de una clave; de lo contrario, debe contener un valor válido. Siendo un nodo valido nulo si el nodo es parte de la clave pero no tiene un significado propio o Si el nodo representa el final de una clave válida, valor debe contener el valor asociado a esa clave. 
 */
+
+// Complejidades:
+// NOTA: Pueden estar mal, sobre todo las recursivas.
+// "n" seria el la clave y |n| el largo de la clave
+// insertar: O(|n|)
+// eliminar: O(|n| + ALFABETO_LEXICOGRAFICO)
+// noTieneHijos: O(ALFABETO_LEXICOGRAFICO)
+// claves: O(ALFABETO_LEXICOGRAFICO * |n|)
+// obtenerClaves: O(ALFABETO_LEXICOGRAFICO * |n|)
+// eliminarSignificado: O(|n|)
+// claveMaterias: O(ALFABETO_LEXICOGRAFICO * |n|)
+// obtenerClavesMaterias: O(ALFABETO_LEXICOGRAFICO * |n|)
+
 public class Trie<T>{
     private Nodo raiz; // Nodo raiz del Trie
     public static final int ALFABETO_LEXICOGRAFICO = 256; // alfabeto para el orden lexicografico segun el codigo ASCII
@@ -69,19 +82,6 @@ public class Trie<T>{
             throw new UnsupportedOperationException("el valor de esta clave es nulo (no deberia pasar)");
         }
         return actual.obtenerValor();
-    }
-
-    // Devuelve True si la clave pertence al Trie (creo que al final ni se uso asi que se lo puede sacar)
-    public boolean buscar(String clave) {
-        Nodo actual = raiz;
-        for (char c : clave.toCharArray()) {
-            int index = c;
-            if (actual.hijos.get(index) == null) {
-                return false;
-            }
-            actual = actual.hijos.get(index);
-        }
-        return actual.valor != null; // Si el nodo significado no es nulo, la clave esta en el Trie
     }
 
     // Método para eliminar una clave del Trie
@@ -153,16 +153,6 @@ public class Trie<T>{
                 claveActual.deleteCharAt(claveActual.length() - 1);
             }
         }
-    }
-
-    // Elimina el significado de una clave (haciendo que la clave ya no sea valida)
-    public void eliminarSignficado(String clave){
-        Nodo actual = raiz;
-        for (char c : clave.toCharArray()) {
-            int index = c;
-            actual = actual.hijos.get(index);
-        }
-        actual.asignarValor(null);
     }
 
     // Obtiene todas las claves del Trie, pero devuelve una lista con solo las lcaves validas (segunn al estado de la Materia)
