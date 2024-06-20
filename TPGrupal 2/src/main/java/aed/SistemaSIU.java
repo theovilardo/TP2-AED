@@ -109,21 +109,21 @@ public class SistemaSIU {
     }
 
     public boolean excedeCupo(String materia, String carrera){
-        int estudiantesInscriptos = inscriptos(materia, carrera);
-        int cupo = calcularCupo(carrera, materia);
-        return estudiantesInscriptos > cupo; // false si excede el cupo, segun el TAD tenia que ser >=, pero asi los tests se rompen asi que queda >, ver que poner bien aca
-    }
+        int estudiantesInscriptos = inscriptos(materia, carrera); // O(|c| + |m|)
+        int cupo = calcularCupo(carrera, materia); //O(|c| + |m|)
+        return estudiantesInscriptos > cupo; // O(1) false si excede el cupo, segun el TAD tenia que ser >=, pero asi los tests se rompen asi que queda >, ver que poner bien aca
+    } //la complejidad final es O(|c| + |m|)
 
-    // Funcion Auxilar para excedeCupo(), calcula el minimo cupo a exceder.
+    // Funcion Auxilar para excedeCupo(), calcula el minimo cupo a exceder. Es O(|c|+|m|)
     public int calcularCupo(String nombreCarrera, String nombreMateria) {
-        Materia materiaAChequear = carreras.obtenerSignificado(nombreCarrera).obtenerSignificado(nombreMateria);
-        int cupoPROF = 250 * materiaAChequear.obtenerPlantelDocente()[0];
+        Materia materiaAChequear = carreras.obtenerSignificado(nombreCarrera).obtenerSignificado(nombreMateria); //O(|c| + |m|)
+        int cupoPROF = 250 * materiaAChequear.obtenerPlantelDocente()[0]; // O(1)
         int cupoJTP = 100 * materiaAChequear.obtenerPlantelDocente()[1];
         int cupoAY1 = 20 * materiaAChequear.obtenerPlantelDocente()[2];
         int cupoAY2 = 30 * materiaAChequear.obtenerPlantelDocente()[3];
 
         //buscar el minimo
-        int cupo = Math.min(Math.min(cupoPROF, cupoJTP), Math.min(cupoAY1, cupoAY2)); // ver si afecta la complejidad ya que es una comparacion simple (creo), y ver si se podia usar el Math o habira que usar otra aux: Minimo
+        int cupo = Math.min(Math.min(cupoPROF, cupoJTP), Math.min(cupoAY1, cupoAY2)); // O(1), son comparaciones simples
 
         return cupo;
     }
