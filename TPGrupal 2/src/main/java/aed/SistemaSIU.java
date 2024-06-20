@@ -86,11 +86,8 @@ public class SistemaSIU {
         for (String libreta : clavesEstudiante){
             estudiantes.obtenerSignificado(libreta).dejarMateria();
         }
-        // Al cerrar la carrera la marco como cerrada y la elimino del Trie
+        // Al cerrar la carrera la marco como cerrada y la "elimino" del Trie
         carreras.obtenerSignificado(carrera).obtenerSignificado(materia).cerrarEstaMateria();
-        // no hay una explicacion de porque lo hacemos por separado, ver que poner aca
-        carreras.obtenerSignificado(carrera).eliminarSignficado(materia); //elimino la instancia de la Materia
-        carreras.obtenerSignificado(carrera).eliminar(materia); // elimino la clave
     }
 
     public int inscriptos(String materia, String carrera){
