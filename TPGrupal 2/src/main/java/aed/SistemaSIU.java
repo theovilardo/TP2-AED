@@ -3,16 +3,17 @@ package aed;
 import java.util.ArrayList;
 
 import aed.SistemaSIU.CargoDocente;
-/* Asignatura = Materia que tiene distinto nombre segun la carrera.
+/*
 Inv Rep: 
 El Trie carreras debe contener un Trie de materiasDeCarrera para cada carrera. 
-Cada materiasDeCarrera debe contener todas las materias asociadas a esa carrera, con las materias de una misma asignatura compartiendo la misma instancia de Materia.
+Cada materiasDeCarrera debe contener todas las materias asociadas a esa carrera. Si en dos carreras distintas existe la misma materia, entonces el valor de las
+claves correspondientes (nombres de la materia para cada carrera) es un puntero a la misma instancia Materia, donde se guarda la información pertinente referida a esa materia.
 El Trie estudiantes debe contener una instancia de Estudiante para cada libreta universitaria proporcionada en el constructor.
 Sobre las complejidades, para no excederos con la cantidad de comentarios, entendemos que realizar una cantidad finita y constante de veces algo que es 
 O(n), sigue siendo O(n).  
 */
 public class SistemaSIU {
-    private Trie<Trie<Materia>> carreras; // Trie de carreras que guarda en su valor un Trie distinto para las materias de esas carreras
+    private Trie<Trie<Materia>> carreras; // Trie de carreras que guarda en su valor un Trie distinto para las materias de esa carrera.
     private Trie<Estudiante> estudiantes; // Trie de estudianes, sus claves son las libretas universitarias y el valor de cada una es una instancia de Estudiante que guarda las inscripciones a las materias
 
     enum CargoDocente{
@@ -101,11 +102,11 @@ public class SistemaSIU {
             estudiantes.obtenerSignificado(libreta).dejarMateria(); //O(1) * E_m = O(|E_m|)
         }
 
-        Materia asignaturaACerrar = carreras.obtenerSignificado(carrera).obtenerSignificado(materia); //O(|c| +|m|)
+        Materia materiaACerrar = carreras.obtenerSignificado(carrera).obtenerSignificado(materia); //O(|c| +|m|)
         
-        for (int i = 0; i < asignaturaACerrar.getCarreras().size(); i++){ //obtengo todas las carreras en las que aparece la materia m, y, para cada una, realizo operaciones en O(|n|)
-            String nombreMateria = asignaturaACerrar.getNombresMateria().get(i); // O(|n|)
-            Trie<Materia> materiasDeCarrera = asignaturaACerrar.getCarreras().get(i); // O(1)
+        for (int i = 0; i < materiaACerrar.getCarreras().size(); i++){ //obtengo todas las carreras en las que aparece la materia m, y, para cada una, realizo operaciones en O(|n|)
+            String nombreMateria = materiaACerrar.getNombresMateria().get(i); // O(|n|)
+            Trie<Materia> materiasDeCarrera = materiaACerrar.getCarreras().get(i); // O(1)
             materiasDeCarrera.eliminar(nombreMateria); // O(n)
         } //termino realizando operaciones en el orden de la suma de todos los nombres de la materia m.
         

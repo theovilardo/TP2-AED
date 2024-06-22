@@ -8,19 +8,16 @@ Inv rep:
 Debe existir un nodo raiz valido
 Cada nodo del Trie debe tener una lista de hijos con exactamente ALFABETO_LEXICOGRAFICO elementos, cada uno de los cuales puede ser nulo o una referencia a otro nodo.
 El valor de un nodo puede ser nulo si el nodo no representa el final de una clave; de lo contrario, debe contener un valor válido. Siendo un nodo valido nulo si el nodo es parte de la clave pero no tiene un significado propio o Si el nodo representa el final de una clave válida, valor debe contener el valor asociado a esa clave. 
+Si un nodo tiene algún hijo no nulo, quiere decir que existe una cadena de nodos, a partir de ese nodo, mediante la cual se llega a una clave. Es decir, no puede haber cadenas de nodos que no lleven a un clave.
 */
 
 // Complejidades:
-// NOTA: Pueden estar mal, sobre todo las recursivas.
 // "n" seria el la clave y |n| el largo de la clave
 // insertar: O(|n|)
-// eliminar: O(|n| + ALFABETO_LEXICOGRAFICO)
-// noTieneHijos: O(ALFABETO_LEXICOGRAFICO)
-// claves: O(ALFABETO_LEXICOGRAFICO * |n|)
-// obtenerClaves: O(ALFABETO_LEXICOGRAFICO * |n|)
-// eliminarSignificado: O(|n|)
-// claveMaterias: O(ALFABETO_LEXICOGRAFICO * |n|)
-// obtenerClavesMaterias: O(ALFABETO_LEXICOGRAFICO * |n|)
+// eliminar: O(|n|)
+// noTieneHijos: O(1)
+// claves: O(suma, de n en claves, de |n|)
+// obtenerSignificado: O(|n|)
 
 public class Trie<T>{
     private Nodo raiz; // Nodo raiz del Trie
