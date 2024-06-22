@@ -24,31 +24,40 @@ public class SistemaSIU {
 
     // Constructor del SistemaSIU
     public SistemaSIU(InfoMateria[] infoMaterias, String[] libretasUniversitarias) {
-        carreras = new Trie<>(); // Creo una nueva instancia para el Trie de carreras
+        carreras = new Trie<>(); 
 
-        for (InfoMateria infoMateria : infoMaterias) { // veo cada infoMateria, vendria a ser la "asignatura"
-            Materia materiaCompartida = new Materia(); // esta instancia de materia se comparte dentro del infoMateria (porque todos los pares dentro de este infoMateria especifico corresponden a la misma asignatura)
-            for (ParCarreraMateria parCarreraMateria : infoMateria.getParesCarreraMateria()) { // obtengo los pares carrera-materia
-                String materiaNombre = parCarreraMateria.getNombreMateria(); // guardo el nombre de la carrera
-                String carreraNombre = parCarreraMateria.getCarrera(); // guardo el nombre de la materia
+        for (InfoMateria infoMateria : infoMaterias) {
+            Materia materiaCompartida = new Materia();
+            for (ParCarreraMateria parCarreraMateria : infoMateria.getParesCarreraMateria()) { 
+                String materiaNombre = parCarreraMateria.getNombreMateria(); // O(1)
+                String carreraNombre = parCarreraMateria.getCarrera(); 
 
-                Trie<Materia> materiasDeCarrera = carreras.obtenerSignificado(carreraNombre); // Trie para guardar todas las materias de la carrera
-                if (materiasDeCarrera == null) { // si no existe la carrera (PARA DEBUG, ver si puede sacarse esta guarda).
-                    materiasDeCarrera = new Trie<>(); // Nuevo Trie en caso de que no exista
-                    carreras.insertar(carreraNombre, materiasDeCarrera); // insertar el Trie materiasDeCarrera en la carrera
+                Trie<Materia> materiasDeCarrera = carreras.obtenerSignificado(carreraNombre); // O(|c|)
+                if (materiasDeCarrera == null) {  //si no está la carrera, la inserto
+                    materiasDeCarrera = new Trie<>(); 
+                    carreras.insertar(carreraNombre, materiasDeCarrera); // O(|c|)
                 }
-                materiasDeCarrera.insertar(materiaNombre, materiaCompartida); // insertar la istancia compartida de materia en las mismas materias (esto es para que apunten a la misma instancia de Materia y se actualicen juntas, es un alisaing intencional)
+
+                materiasDeCarrera.insertar(materiaNombre, materiaCompartida); // O(|N_m|). Insertar la istancia compartida de materia en las mismas materias (esto es para que apunten a la misma instancia de Materia y se actualicen juntas, es un alisaing intencional)
 
                 materiaCompartida.agregarNombreMateria(materiaNombre);
-                materiaCompartida.agregarCarrera(materiasDeCarrera); //guardo cada carrera donde aparece esa materia (asignatura)
+                materiaCompartida.agregarCarrera(materiasDeCarrera); //guardamos dentro de cada materia, punteros a los tries de materias de otras carreras donde aparezca esa materia.
+                                                                    // se guardan dentro de un ArrayList (dinámico), por lo que es O(1).
             }
-        }
+        } 
+        /*
+         Para cada par carrera-nombre_materia se terminan realizando operaciones en orden O(|c|+ |n|). Además, se hace para cada nombre de cada materia, por lo que ser.
+         Es decir, sería la sumatoria para cada materia m en M de la sumatoria para cada nombre de esa materia n en N_m, y cada carrera c donde aparezca esa materia, de n + c.
+         Pero eso es equivalente a decir que, para cada materia en M, realizamos, para cada nombre n que tenga |n| operaciones, y luego, para cada carrera, operaciones en el orden
+         de |c| * |M_c|, con M_c las materias de esa carrera. Es simplemente reordenar la sumatoria, y en vez de pensar cada carrera por materia, pensar las materias por carrera.
+         En conclusión, la implementación cumple con la complejidad pedida.
+        */
         
-        estudiantes = new Trie<>(); // Creo una nueva instancia para el Trie de estudiantes
+        estudiantes = new Trie<>();
         for (String libreta : libretasUniversitarias) {
-            Estudiante e = new Estudiante(); // Inicializo la clase estudiante para guardarlo como valor para cada clave (libreta universitaria) en el Trie de estudiantes
-            estudiantes.insertar(libreta, e); // inserto la libreta como clave y el e: Estudiante como valor
-        }
+            Estudiante e = new Estudiante();
+            estudiantes.insertar(libreta, e); //como libreta está acotado, es k * E operaciones
+        } // O(E). Luego, se cumple con lo pedido en términos de complejidad.
     }
 
     public void inscribir(String estudiante, String carrera, String materia){
@@ -92,26 +101,15 @@ public class SistemaSIU {
             estudiantes.obtenerSignificado(libreta).dejarMateria(); //O(1) * E_m = O(|E_m|)
         }
 
-        Materia asignaturaACerrar = carreras.obtenerSignificado(carrera).obtenerSignificado(materia);
+        Materia asignaturaACerrar = carreras.obtenerSignificado(carrera).obtenerSignificado(materia); //O(|c| +|m|)
         
-        for (int i = 0; i < asignaturaACerrar.getCarreras().size(); i++){
-            System.out.print(asignaturaACerrar.getNombresMateria());
-            String nombreMateria = asignaturaACerrar.getNombresMateria().get(i);
-            Trie<Materia> materiasDeCarrera = asignaturaACerrar.getCarreras().get(i);
-            materiasDeCarrera.eliminar(nombreMateria);
-        }
-        // for (Trie<Materia> materiasDeCarrera : asignaturaACerrar.getCarreras()){
-        //     materiasDeCarrera.eliminar(materia);
-        // }
-
-        // // Para surtir el problema de no poder acceder nuevamente al resto de las carreras que compartan esta asignatura,
-        // // y teniendo en cuenta que no existe la posibilidad de abrir una materia luego de ser cerrada (por los métodos posibles)
-        // // en vez de eliminar la instancia Materia y su clave correspondiente de todas las carreras que la compartan, marcamos a la materia
-        // // como cerrada usando una variable booleana dentro de la instancia materia. De esta forma, al pedir las materias de cierta carrera,
-        // // indicaremos que si la materia está cerrada, no se devuelva. Esto tiene entonces complejidad O(|c+m|)
-        // carreras.obtenerSignificado(carrera).obtenerSignificado(materia).cerrarEstaMateria();
-        // // la complejidad final es O(|c+m|) + O(|E_m|) que está contenido dentro de lo pedido, O(|c+m| + E_m| + O(|c+m| + E_m + la suma de cada nombre de materia de la asignatura m)
-    }
+        for (int i = 0; i < asignaturaACerrar.getCarreras().size(); i++){ //obtengo todas las carreras en las que aparece la materia m, y, para cada una, realizo operaciones en O(|n|)
+            String nombreMateria = asignaturaACerrar.getNombresMateria().get(i); // O(|n|)
+            Trie<Materia> materiasDeCarrera = asignaturaACerrar.getCarreras().get(i); // O(1)
+            materiasDeCarrera.eliminar(nombreMateria); // O(n)
+        } //termino realizando operaciones en el orden de la suma de todos los nombres de la materia m.
+        
+    } //todo termina siendo O(|c|+ |m| + suma, para n en N_m, de |n| + |E_m|)
 
     public int inscriptos(String materia, String carrera){
         int inscriptos = 0;
@@ -127,7 +125,7 @@ public class SistemaSIU {
     public boolean excedeCupo(String materia, String carrera){
         int estudiantesInscriptos = inscriptos(materia, carrera); // O(|c| + |m|)
         int cupo = calcularCupo(carrera, materia); //O(|c| + |m|)
-        return estudiantesInscriptos > cupo; // O(1) false si excede el cupo, segun el TAD tenia que ser >=, pero asi los tests se rompen asi que queda >, ver que poner bien aca
+        return estudiantesInscriptos > cupo; // O(1). Segun el TAD tenia que ser >=, pero asi los tests se rompen asi que queda >
     } //la complejidad final es O(|c| + |m|)
 
     // Funcion Auxilar para excedeCupo(), calcula el minimo cupo a exceder. Es O(|c|+|m|)
@@ -145,16 +143,16 @@ public class SistemaSIU {
     }
 
     public String[] carreras(){
-        String[] stringArray = carreras.claves().toArray(new String[0]); //pasa de List<String> a String[], no creo que afecte la complejidad, igual chequear
+        String[] stringArray = carreras.claves().toArray(new String[0]); //recorro en el Trie, todas las carreras. Es O(suma, para c en C, |c|). (el toArray vuelven a ser el mismo orden de operaciones, pero O(n) = O(2n)
         return stringArray;
-    }
+    } 
 
     public String[] materias(String carrera){
-        String[] stringToArray = carreras.obtenerSignificado(carrera).claves().toArray(new String[0]); // .claveMaterias() devuelve la lista de materias abiertas (no cerradas) de la carrera
+        String[] stringToArray = carreras.obtenerSignificado(carrera).claves().toArray(new String[0]); // recorro primero la carrera (|c|), y luego, en el Trie, todas las materias de esa carrera. Es O(|c| + suma, para m en M_c, |m|)
         return stringToArray;
     }
 
     public int materiasInscriptas(String estudiante){
-        return estudiantes.obtenerSignificado(estudiante).cantidadDeInscripciones();
+        return estudiantes.obtenerSignificado(estudiante).cantidadDeInscripciones(); //como la libreta es acotada, recorrerla es O(1). Hacer .cantidadDeInscripciones también. Es O(1)
     }
 }
